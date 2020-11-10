@@ -1,11 +1,64 @@
 #include <iostream>
 #include <vector>
 
+void swap(int* x, int* y)
+{
+    int bufor = *y;
+    *y = *x;
+    *x = bufor;
+}
+
+class Heap
+{
+    void buildHeap()
+    {
+        for(int i = numbers.size()/2 - 1; i >= 0; --i)
+            heapify(i, numbers.size());
+    }
+
+    void heapify(int i, int size)
+    {
+        int max = i, left = 2*i + 1, right = 2*i + 2;
+        if(left < size && numbers[left] > numbers[max])
+            max = left;
+        
+        if(right < size && numbers[right] > numbers[max])
+            max = right;
+
+        if(max != i)
+        {
+            swap(&numbers[i], &numbers[max]);
+            heapify(max, size);
+        }
+    }
+
+public:
+    std::vector<int> numbers;
+
+    Heap(std::vector<int>* numbersToCopy)
+    {
+        numbers = *numbersToCopy;
+    }
+
+    std::vector<int>& heapSort()
+    {
+        buildHeap();
+
+        for(int i = numbers.size() - 1; i >= 1; --i)
+        {
+            swap(&numbers[0], &numbers[i]);
+            heapify(0, i);
+        }
+
+        return numbers;
+    }
+};
+
 class Sort
 {
     private:
     
-    std::vector<int> numbers = {13, 0, 5, 3, 1, 8, 12, 65, 12, 42};
+    std::vector<int> numbers = {6, 12, 5, 6, 21, 42, 1, 13, 33, 2};
     
     public:
     int numbersSize = numbers.size();
@@ -81,6 +134,12 @@ class Sort
         
     }
 
+    void heapSort()
+    {
+        Heap heap(&numbers);
+        numbers = heap.heapSort();
+    }
+
     bool verify()
     {
         for(int i = 0; i < numbers.size(); ++i)
@@ -107,7 +166,11 @@ int main()
 {
     Sort sort;
     sort.display();
-    sort.mergeSort(0, sort.numbersSize - 1);
+
+    //sort.insertionSort();
+    //sort.mergeSort(0, sort.numbersSize - 1);
+    sort.heapSort();
+    
     std::cout << sort.verify() << std::endl;
     sort.display();
 
